@@ -1,54 +1,77 @@
-<!-- Bahagian Kod Borang Tempahan & Kalkulator Interaktif -->
-<div class="booking-card" style="background: #173F3A; color: #F6F0E7; padding: 30px; border-radius: 12px; max-width: 600px; font-family: sans-serif;">
-    <h3 style="color: #CBA45D; margin-bottom: 10px;">Semak Tarikh & Kira Anggaran Kos</h3>
-    <p style="font-size: 14px; margin-bottom: 20px;">Pilih bilangan malam penginapan anda di Alanis Stay, Marang.</p>
-    
-    <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Kadar Asas Semalam:</label>
-        <div style="font-size: 24px; color: #CBA45D; font-weight: bold;">RM 250.00</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alanis Stay | Marang, Terengganu</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; background: white; margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1b4d3e; text-align: center; margin-bottom: 10px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #444; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .price-box { background: #e8f5e9; padding: 20px; border-radius: 8px; text-align: center; margin-top: 25px; margin-bottom: 25px; }
+        .price-box h3 { margin: 0; color: #2e7d32; font-size: 18px; }
+        .price-box .amount { font-size: 32px; font-weight: bold; color: #1b5e20; margin-top: 10px; }
+        button { background-color: #25d366; color: white; border: none; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.3s; }
+        button:hover { background-color: #1ebe5d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Alanis Stay</h1>
+    <p class="subtitle">Marang, Terengganu • Cozy Standard Homestay</p>
+
+    <div class="form-group">
+        <label for="roomType">Select Stay Package:</label>
+        <select id="roomType">
+            <option value="250">Full House (Standard) - RM250 / night</option>
+        </select>
     </div>
 
-    <div style="margin-bottom: 20px;">
-        <label for="nightsInput" style="display: block; margin-bottom: 5px;">Bilangan Malam:</label>
-        <input type="number" id="nightsInput" value="1" min="1" max="30" style="padding: 10px; width: 100%; border-radius: 6px; border: 1px solid #CBA45D; background: #F6F0E7; color: #173F3A; font-size: 16px;">
+    <div class="form-group">
+        <label for="nights">Number of Nights:</label>
+        <input type="number" id="nights" value="1" min="1" max="30">
     </div>
 
-    <div style="margin-bottom: 25px; padding: 15px; background: rgba(203, 164, 93, 0.1); border-radius: 8px; border: 1px dashed #CBA45D;">
-        <span style="font-size: 16px;">Anggaran Jumlah Keseluruhan:</span>
-        <div id="totalPriceDisplay" style="font-size: 28px; font-weight: bold; color: #CBA45D; margin-top: 5px;">RM 250.00</div>
+    <div class="price-box">
+        <h3>Estimated Total Price</h3>
+        <div class="amount" id="totalPrice">RM 250.00</div>
     </div>
 
-    <button type="button" onclick="sendWhatsAppBooking()" style="background-color: #CBA45D; color: #173F3A; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%;">
-        Tempah Sekarang via WhatsApp
-    </button>
+    <button onclick="sendWhatsApp()">Book via WhatsApp</button>
 </div>
 
-<!-- Skrip Pengiraan & Sambungan WhatsApp -->
 <script>
-    const nightsInput = document.getElementById('nightsInput');
-    const totalPriceDisplay = document.getElementById('totalPriceDisplay');
-    const pricePerNight = 250;
+    const roomSelect = document.getElementById('roomType');
+    const nightsInput = document.getElementById('nights');
+    const totalPriceDisplay = document.getElementById('totalPrice');
 
-    // Fungsi Kira Harga Automatik
-    function updateTotalPrice() {
+    function updatePrice() {
+        let pricePerNight = parseInt(roomSelect.value);
         let nights = parseInt(nightsInput.value) || 1;
-        let total = nights * pricePerNight;
-        totalPriceDisplay.textContent = 'RM ' + total.toLocaleString() + '.00';
+        let total = pricePerNight * nights;
+        totalPriceDisplay.textContent = 'RM ' + total.toFixed(2);
     }
 
-    nightsInput.addEventListener('input', updateTotalPrice);
+    roomSelect.addEventListener('change', updatePrice);
+    nightsInput.addEventListener('input', updatePrice);
 
-    // Fungsi Hantar Mesej ke WhatsApp
-    function sendWhatsAppBooking() {
+    function sendWhatsApp() {
+        let roomName = roomSelect.options[roomSelect.selectedIndex].text;
         let nights = nightsInput.value;
         let total = totalPriceDisplay.textContent;
         
-        // Gantikan nombor di bawah dengan nombor WhatsApp anda (format antarabangsa tanpa '+' atau '-')
-        let phoneNumber = "60108233774"; 
+        let phoneNumber = "60108233774"; // Nombor WhatsApp anda
+        let message = `Hello Alanis Stay, I would like to make a booking:\n\n* Package: ${roomName}\n* Duration: ${nights} night(s)\n* Estimated Total: ${total}\n\nPlease check availability. Thank you!`;
         
-        let message = `Hai Alanis Stay, saya ingin membuat tempahan homestay:\n\n* Tempoh: ${nights} Malam\n* Anggaran Kos: ${total}\n\nMohon semak kekosongan tarikh. Terima kasih!`;
-        
-        let whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappURL, '_blank');
+        let url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
     }
 </script>
+
+</body>
+</html>
